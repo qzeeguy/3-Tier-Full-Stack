@@ -1,0 +1,13 @@
+
+pipeline {
+    agent any
+    stages {
+        stage('Vault Test') {
+            steps {
+                withVault([vaultSecrets: [[path: 'secret/data/myapp', secretValues: [[envVar: 'DB_PASSWORD', vaultKey: 'password']]]]]) {
+                    sh 'echo "Fetched secret: $DB_PASSWORD"'
+                }
+            }
+        }
+    }
+}
