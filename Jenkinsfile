@@ -1,21 +1,20 @@
 pipeline {
     agent any
+
     parameters {
         string(name: "BRANCH_NAME", defaultValue: "file/dev", description: "Specify the branch name to deploy")
     }
 
-
-
     stages {
-        stage(age('Checkout') {
+        stage('Checkout') {
             environment {
                 GITHUB_USER  = vault(path: 'secret/github', key: 'username')
                 GITHUB_TOKEN = vault(path: 'secret/github', key: 'token')
             }
             steps {
                 git url: "https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/myorg/node-app.git", branch: 'main'
-            }  
-        }    
+            }
+        }
 
         stage('Test') {
             steps {
@@ -41,7 +40,7 @@ pipeline {
         stage('SonarQube Analysis') {
             environment {
                 SONARQUBE_TOKEN = vault(path: 'secret/sonarqube', key: 'token')
-                SONARQUBE_URL   = 'http://sonarqube.mycompany.com:9000'
+                SONARQUBE_URL   = '3.238.111.36:9000'
             }
             steps {
                 withSonarQubeEnv('MySonarQubeServer') {
