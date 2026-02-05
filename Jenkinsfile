@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        VAULT_ADDR = 'https://vault.mycompany.com:8200'
+        VAULT_ADDR = '44.222.232.182:8200'
     }
     stages {
         stage('Fetch Secrets') {
