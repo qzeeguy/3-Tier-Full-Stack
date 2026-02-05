@@ -41,7 +41,7 @@ pipeline {
         stage('SonarQube Analysis') {
             environment {
                 SONARQUBE_TOKEN = vault(path: 'secret/sonarqube', key: 'token')
-                SONARQUBE_URL   = 'http://sonarqube.mycompany.com:9000'
+                SONARQUBE_URL   = '3.238.111.36:9000'
             }
             steps {
                 withSonarQubeEnv('MySonarQubeServer') {
