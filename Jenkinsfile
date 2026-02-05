@@ -26,8 +26,8 @@ pipeline {
         stage('Build') {
             when {
                 expression {
-                    def pkgChanged = sh(script: "git diff --name-only HEAD~1 HEAD | grep package.json || true", returnStdout: true).trim()
-                    def srcChanged = sh(script: "git diff --name-only HEAD~1 HEAD | grep -E '\\.js$|\\.ts$' || true", returnStdout: true).trim()
+                    def pkgChanged = sh(script: 'git diff --name-only HEAD~1 HEAD | grep package.json || true', returnStdout: true).trim()
+                    def srcChanged = sh(script: 'git diff --name-only HEAD~1 HEAD | grep -E "\\.js$|\\.ts$" || true', returnStdout: true).trim()
                     return (pkgChanged || srcChanged)
                 }
             }
@@ -40,40 +40,9 @@ pipeline {
         stage('SonarQube Analysis') {
             environment {
                 SONARQUBE_TOKEN = vault(path: 'secret/sonarqube', key: 'token')
-                SONARQUBE_URL   = '3.238.111.36:9000'
+                SONARQUBE_URL   = 'http://3.238.111.36:9000'
             }
             steps {
                 withSonarQubeEnv('MySonarQubeServer') {
-                    sh """
-                        npx sonar-scanner \
-                          -Dsonar.projectKey=node-app \
-                          -Dsonar.sources=. \
-                          -Dsonar.host.url=${SONARQUBE_URL} \
-                          -Dsonar.login=${SONARQUBE_TOKEN}
-                    """
-                }
-            }
-        }
-
-        stage('Docker Build') {
-            steps {
-                sh """
-                    docker build -t myorg/node-app:${BUILD_NUMBER} .
-                """
-            }
-        }
-
-        stage('Docker Push') {
-            environment {
-                DOCKER_USER = vault(path: 'secret/dockerhub', key: 'username')
-                DOCKER_PASS = vault(path: 'secret/dockerhub', key: 'password')
-            }
-            steps {
-                sh """
-                    echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin
-                    docker push myorg/node-app:${BUILD_NUMBER}
-                """
-            }
-        }
-    }
-}
+                    // Use single quotes for shell so Groovy doesn't interpolate
+                    sh 'npx son
