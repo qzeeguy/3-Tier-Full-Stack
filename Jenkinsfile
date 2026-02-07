@@ -12,7 +12,7 @@ pipeline {
 
     stages {
 
-        // ------------------------------
+        // -----------------------------
         stage('Checkout from GitHub') {
             environment {
                 GITHUB_USER  = vault(path: 'secret/github', key: 'username')
