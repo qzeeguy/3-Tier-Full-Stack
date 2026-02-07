@@ -36,11 +36,11 @@ jobs:
       # Fetch all secrets from Vault paths
       - name: Fetch Secrets
         run: |
-          GITHUB_USER=$(vault kv get -field=username secret/data/github --token=$VAULT_TOKEN)
-          GITHUB_TOKEN=$(vault kv get -field=token secret/data/github --token=$VAULT_TOKEN)
-          DOCKER_USER=$(vault kv get -field=username secret/data/dockerhub --token=$VAULT_TOKEN)
-          DOCKER_PASS=$(vault kv get -field=password secret/data/dockerhub --token=$VAULT_TOKEN)
-          SONARQUBE_TOKEN=$(vault kv get -field=token secret/data/sonarqube --token=$VAULT_TOKEN)
+          GITHUB_USER=$(vault kv get -field=username --token=$VAULT_TOKEN secret/github)
+          GITHUB_TOKEN=$(vault kv get -field=token --token=$VAULT_TOKEN secret/github)
+          DOCKER_USER=$(vault kv get -field=username --token=$VAULT_TOKEN secret/dockerhub)
+          DOCKER_PASS=$(vault kv get -field=password --token=$VAULT_TOKEN secret/dockerhub)
+          SONARQUBE_TOKEN=$(vault kv get -field=token --token=$VAULT_TOKEN secret/sonarqube)
 
           echo "GITHUB_USER=$GITHUB_USER" >> $GITHUB_ENV
           echo "GITHUB_TOKEN=$GITHUB_TOKEN" >> $GITHUB_ENV
