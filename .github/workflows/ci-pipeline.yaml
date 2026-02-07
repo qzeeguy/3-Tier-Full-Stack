@@ -23,7 +23,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y vault jq
 
-      # Authenticate with Vault using single AppRole
+      # Authenticate with Vault using AppRole
       - name: Authenticate with Vault
         env:
           VAULT_ADDR: http://52.204.202.23:8200
@@ -37,11 +37,11 @@ jobs:
       # Fetch all secrets from Vault paths (KV v2)
       - name: Fetch Secrets
         run: |
-          GITHUB_USER=$(vault kv get -field=username secret/github)
-          GITHUB_TOKEN=$(vault kv get -field=token secret/github)
-          DOCKER_USER=$(vault kv get -field=username secret/dockerhub)
-          DOCKER_PASS=$(vault kv get -field=password secret/dockerhub)
-          SONARQUBE_TOKEN=$(vault kv get -field=token secret/sonarqube)
+          GITHUB_USER=$(vault kv get -field=username secret/github --token=$VAULT_TOKEN)
+          GITHUB_TOKEN=$(vault kv get -field=token secret/github --token=$VAULT_TOKEN)
+          DOCKER_USER=$(vault kv get -field=username secret/dockerhub --token=$VAULT_TOKEN)
+          DOCKER_PASS=$(vault kv get -field=password secret/dockerhub --token=$VAULT_TOKEN)
+          SONARQUBE_TOKEN=$(vault kv get -field=token secret/sonarqube --token=$VAULT_TOKEN)
 
           echo "GITHUB_USER=$GITHUB_USER" >> $GITHUB_ENV
           echo "GITHUB_TOKEN=$GITHUB_TOKEN" >> $GITHUB_ENV
