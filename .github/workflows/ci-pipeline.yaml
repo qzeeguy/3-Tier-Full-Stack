@@ -23,23 +23,30 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y vault jq
 
-      # Authenticate with Vault using AppRole
+      # Authenticate with Vault using single AppRole
       - name: Authenticate with Vault
         env:
-          VAULT_ADDR: http://52.204.202.23:8200/
+          VAULT_ADDR: http://52.204.202.23:8200
           ROLE_ID: ${{ secrets.VAULT_ROLE_ID }}
           SECRET_ID: ${{ secrets.VAULT_SECRET_ID }}
         run: |
           VAULT_TOKEN=$(vault write -field=token auth/approle/login role_id=$ROLE_ID secret_id=$SECRET_ID)
           echo "VAULT_TOKEN=$VAULT_TOKEN" >> $GITHUB_ENV
 
-      # Fetch GitHub credentials from Vault
-      - name: Fetch GitHub credentials
+      # Fetch all secrets from Vault paths
+      - name: Fetch Secrets
         run: |
-          GITHUB_USER=$(vault kv get -field=username secret/github --token=$VAULT_TOKEN)
-          GITHUB_TOKEN=$(vault kv get -field=token secret/github --token=$VAULT_TOKEN)
+          GITHUB_USER=$(vault kv get -field=username secret/data/github --token=$VAULT_TOKEN)
+          GITHUB_TOKEN=$(vault kv get -field=token secret/data/github --token=$VAULT_TOKEN)
+          DOCKER_USER=$(vault kv get -field=username secret/data/dockerhub --token=$VAULT_TOKEN)
+          DOCKER_PASS=$(vault kv get -field=password secret/data/dockerhub --token=$VAULT_TOKEN)
+          SONARQUBE_TOKEN=$(vault kv get -field=token secret/data/sonarqube --token=$VAULT_TOKEN)
+
           echo "GITHUB_USER=$GITHUB_USER" >> $GITHUB_ENV
           echo "GITHUB_TOKEN=$GITHUB_TOKEN" >> $GITHUB_ENV
+          echo "DOCKER_USER=$DOCKER_USER" >> $GITHUB_ENV
+          echo "DOCKER_PASS=$DOCKER_PASS" >> $GITHUB_ENV
+          echo "SONARQUBE_TOKEN=$SONARQUBE_TOKEN" >> $GITHUB_ENV
 
       # Build & Test
       - name: Build & Test
@@ -50,7 +57,6 @@ jobs:
       # SonarQube Analysis
       - name: SonarQube Analysis
         run: |
-          SONARQUBE_TOKEN=$(vault kv get -field=token secret/sonarqube --token=$VAULT_TOKEN)
           SONARQUBE_URL="http://100.53.185.191:9000"
           npx sonar-scanner \
             -Dsonar.projectKey=node-app \
@@ -61,8 +67,6 @@ jobs:
       # Docker Build & Push
       - name: Docker Build & Push
         run: |
-          DOCKER_USER=$(vault kv get -field=username secret/dockerhub --token=$VAULT_TOKEN)
-          DOCKER_PASS=$(vault kv get -field=password secret/dockerhub --token=$VAULT_TOKEN)
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           TIMESTAMP=$(date +%Y%m%d-%H%M%S)
           IMAGE_NAME="myrepo/myimage"
