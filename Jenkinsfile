@@ -1,12 +1,9 @@
 pipeline {
     agent {
-        
-    docker {
-        image 'alqoseemi/runner-node-docker:latest'
-        args '-v /var/run/docker.sock:/var/run/docker.sock -u jenkins'
-    }
-}
-
+        docker {
+            image 'alqoseemi/runner-node-docker:latest'
+            args '-v /var/run/docker.sock:/var/run/docker.sock -u jenkins'
+        }
     }
 
     parameters {
