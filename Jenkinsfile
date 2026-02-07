@@ -1,8 +1,7 @@
 pipeline {
     agent {
         docker {
-            image 'alqoseemi/runner-node-docker:latest
-'
+            image 'alqoseemi/runner-node-docker:latest'
             args '-v /var/run/docker.sock:/var/run/docker.sock'
         }
     }
@@ -100,6 +99,12 @@ pipeline {
                     '''
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()  // clean up workspace after each run
         }
     }
 }
