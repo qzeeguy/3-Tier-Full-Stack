@@ -34,7 +34,7 @@ jobs:
           echo "VAULT_TOKEN=$VAULT_TOKEN" >> $GITHUB_ENV
           echo "VAULT_ADDR=$VAULT_ADDR" >> $GITHUB_ENV
 
-      # Fetch all secrets from Vault paths
+      # Fetch all secrets from Vault paths (KV v2)
       - name: Fetch Secrets
         run: |
           GITHUB_USER=$(vault kv get -field=username secret/github)
